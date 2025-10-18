@@ -113,6 +113,8 @@ export function GenerativeArtScene() {
                     gl_FragColor = vec4(finalColor, 1.0);
                 }`,
       wireframe: true,
+      transparent: true,
+      opacity: 1,
     });
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
@@ -122,11 +124,30 @@ export function GenerativeArtScene() {
     lightRef.current = pointLight;
     scene.add(pointLight);
 
+    // Raycaster for mouse interaction
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let targetRotationX = 0;
+    let targetRotationY = 0;
+    let isHovering = false;
+
     let frameId: number;
     const animate = (t: number) => {
       material.uniforms.time.value = t * 0.0003;
-      mesh.rotation.y += 0.0005;
-      mesh.rotation.x += 0.0002;
+      
+      // Smooth rotation towards target
+      mesh.rotation.y += (targetRotationY - mesh.rotation.y) * 0.05;
+      mesh.rotation.x += (targetRotationX - mesh.rotation.x) * 0.05;
+      
+      // Apply dissipation effect when hovering
+      if (isHovering) {
+        mesh.scale.lerp(new THREE.Vector3(1.2, 1.2, 1.2), 0.1);
+        material.opacity = Math.max(0.3, material.opacity - 0.02);
+      } else {
+        mesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.1);
+        material.opacity = Math.min(1, material.opacity + 0.02);
+      }
+      
       renderer.render(scene, camera);
       frameId = requestAnimationFrame(animate);
     };
@@ -142,6 +163,20 @@ export function GenerativeArtScene() {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
+      // Update mouse position for raycasting
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      
+      // Check for hover
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObject(mesh);
+      isHovering = intersects.length > 0;
+      
+      // Update rotation based on mouse position
+      targetRotationY = mouse.x * Math.PI * 0.5;
+      targetRotationX = -mouse.y * Math.PI * 0.3;
+      
+      // Update light position
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = -(e.clientY / window.innerHeight) * 2 + 1;
       const vec = new THREE.Vector3(x, y, 0.5).unproject(camera);
