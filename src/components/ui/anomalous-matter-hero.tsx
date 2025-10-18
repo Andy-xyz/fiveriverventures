@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, Suspense } from "react";
 import * as THREE from "three";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo.svg";
 
 export function GenerativeArtScene() {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -182,8 +182,8 @@ export function AnomalousMatterHero({
     >
       <img 
         src={logo} 
-        alt="Logo" 
-        className="absolute top-8 left-8 w-16 h-16 z-30 object-contain"
+        alt="Five Rivers Logo" 
+        className="absolute top-8 left-8 w-48 h-auto z-30 object-contain"
       />
       
       <Suspense fallback={<div className="w-full h-full bg-background" />}>
