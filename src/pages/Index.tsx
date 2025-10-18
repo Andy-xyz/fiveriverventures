@@ -6,7 +6,7 @@ const Index = () => {
       <AnomalousMatterHero
         title="COMING IN LATE 2025"
         subtitle=""
-        description="A new form of digital existence has been observed. It responds to stimuli, changes form, and exudes an unknown energy. Further study is required."
+        description="FIVE RIVER VENTURES IS A GLOBAL, EARLY-TO-MID STAGE VENTURE CAPITAL FIRM INVESTING IN TRANSFORMATIVE APPLICATION-LAYER AI COMPANIES."
       />
     </div>
   );
