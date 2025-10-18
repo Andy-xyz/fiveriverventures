@@ -183,7 +183,7 @@ export function AnomalousMatterHero({
       <img 
         src={logo} 
         alt="Five Rivers Logo" 
-        className="absolute top-8 left-8 w-48 h-auto z-30 object-contain"
+        className="absolute top-4 left-4 w-32 h-auto md:top-8 md:left-8 md:w-48 z-30 object-contain"
       />
       
       <Suspense fallback={<div className="w-full h-full bg-background" />}>
@@ -192,15 +192,17 @@ export function AnomalousMatterHero({
 
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
 
-      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-20 md:pb-32 text-center">
-        <div className="max-w-3xl px-4 animate-fade-in-long">
-          <h1 className="text-sm font-mono tracking-widest text-foreground uppercase">
+      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-12 px-4 md:pb-20 lg:pb-32 text-center">
+        <div className="max-w-3xl animate-fade-in-long">
+          <h1 className="text-xs md:text-sm font-mono tracking-widest text-foreground uppercase">
             {title}
           </h1>
-          <p className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
-            {subtitle}
-          </p>
-          <p className="mt-6 max-w-xl mx-auto text-base leading-relaxed text-muted-foreground">
+          {subtitle && (
+            <p className="mt-3 md:mt-4 text-2xl md:text-3xl lg:text-5xl font-bold leading-tight">
+              {subtitle}
+            </p>
+          )}
+          <p className="mt-4 md:mt-6 max-w-xl mx-auto text-sm md:text-base leading-relaxed text-muted-foreground">
             {description}
           </p>
         </div>
