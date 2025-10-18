@@ -5,8 +5,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <AnomalousMatterHero
         title="COMING IN LATE 2025"
-        subtitle="A new form of digital existence has been observed. It responds to stimuli, changes form, and exudes an unknown energy. Further study is required."
-        description=""
+        subtitle="Matter in a state of constant, beautiful flux."
+        description="A new form of digital existence has been observed. It responds to stimuli, changes form, and exudes an unknown energy. Further study is required."
       />
     </div>
   );
