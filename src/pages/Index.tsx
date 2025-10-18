@@ -1,12 +1,13 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { AnomalousMatterHero } from "@/components/ui/anomalous-matter-hero";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <AnomalousMatterHero
+        title="Observation Log: Anomaly 7"
+        subtitle="Matter in a state of constant, beautiful flux."
+        description="A new form of digital existence has been observed. It responds to stimuli, changes form, and exudes an unknown energy. Further study is required."
+      />
     </div>
   );
 };
