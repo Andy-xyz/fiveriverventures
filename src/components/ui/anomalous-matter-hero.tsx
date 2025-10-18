@@ -11,20 +11,27 @@ export function GenerativeArtScene() {
     if (!currentMount) return;
 
     const scene = new THREE.Scene();
+    
+    // Adjust camera position based on viewport width for mobile
+    const isMobile = currentMount.clientWidth < 768;
+    const cameraZ = isMobile ? 4.5 : 3;
+    
     const camera = new THREE.PerspectiveCamera(
       75,
       currentMount.clientWidth / currentMount.clientHeight,
       0.1,
       1000
     );
-    camera.position.z = 3;
+    camera.position.z = cameraZ;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     currentMount.appendChild(renderer.domElement);
 
-    const geometry = new THREE.IcosahedronGeometry(1.2, 64);
+    // Adjust mesh size for mobile
+    const meshSize = isMobile ? 1.0 : 1.2;
+    const geometry = new THREE.IcosahedronGeometry(meshSize, 64);
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
@@ -132,6 +139,8 @@ export function GenerativeArtScene() {
 
     const handleResize = () => {
       if (!currentMount) return;
+      const isMobile = currentMount.clientWidth < 768;
+      camera.position.z = isMobile ? 4.5 : 3;
       camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
