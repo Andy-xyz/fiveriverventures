@@ -196,8 +196,8 @@ export function AnomalousMatterHero({
 
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
 
-      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-12 px-4 md:pb-20 lg:pb-32 text-center">
-        <div className="max-w-3xl animate-fade-in-long">
+      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-20 md:pb-32 text-center">
+        <div className="max-w-3xl px-4 animate-fade-in-long">
           <h1 className="text-xs md:text-sm font-mono tracking-widest text-foreground uppercase">
             {title}
           </h1>
