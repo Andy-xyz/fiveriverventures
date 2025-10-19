@@ -14,7 +14,7 @@ export function GenerativeArtScene() {
     
     // Adjust camera position based on viewport width for mobile
     const isMobile = currentMount.clientWidth < 768;
-    const cameraZ = isMobile ? 5.5 : 3;
+    const cameraZ = isMobile ? 3.5 : 3;
     
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -30,7 +30,7 @@ export function GenerativeArtScene() {
     currentMount.appendChild(renderer.domElement);
 
     // Adjust mesh size for mobile
-    const meshSize = isMobile ? 0.85 : 1.2;
+    const meshSize = isMobile ? 1.1 : 1.2;
     const geometry = new THREE.IcosahedronGeometry(meshSize, 64);
     const material = new THREE.ShaderMaterial({
       uniforms: {
@@ -140,7 +140,7 @@ export function GenerativeArtScene() {
     const handleResize = () => {
       if (!currentMount) return;
       const isMobile = currentMount.clientWidth < 768;
-      camera.position.z = isMobile ? 5.5 : 3;
+      camera.position.z = isMobile ? 3.5 : 3;
       camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
@@ -201,7 +201,7 @@ export function AnomalousMatterHero({
 
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
 
-      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-16 md:pb-32 text-center">
+      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-24 md:pb-32 text-center">
         <div className="max-w-3xl px-4 animate-fade-in-long">
           <h1 className="text-sm font-mono tracking-widest text-foreground uppercase">
             {title}
