@@ -1,23 +1,30 @@
 import React, { useRef, useEffect, Suspense } from "react";
 import * as THREE from "three";
 import logo from "@/assets/logo.svg";
+
 export function GenerativeArtScene() {
   const mountRef = useRef<HTMLDivElement>(null);
   const lightRef = useRef<THREE.PointLight | null>(null);
+
   useEffect(() => {
     const currentMount = mountRef.current;
     if (!currentMount) return;
-    const scene = new THREE.Scene();
 
+    const scene = new THREE.Scene();
+    
     // Adjust camera position based on viewport width for mobile
     const isMobile = currentMount.clientWidth < 768;
     const cameraZ = isMobile ? 3.5 : 3;
-    const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
+    
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      currentMount.clientWidth / currentMount.clientHeight,
+      0.1,
+      1000
+    );
     camera.position.z = cameraZ;
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      alpha: true
-    });
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
     currentMount.appendChild(renderer.domElement);
@@ -27,15 +34,9 @@ export function GenerativeArtScene() {
     const geometry = new THREE.IcosahedronGeometry(meshSize, 64);
     const material = new THREE.ShaderMaterial({
       uniforms: {
-        time: {
-          value: 0
-        },
-        pointLightPos: {
-          value: new THREE.Vector3(0, 0, 5)
-        },
-        color: {
-          value: new THREE.Color("#000000")
-        }
+        time: { value: 0 },
+        pointLightPos: { value: new THREE.Vector3(0, 0, 5) },
+        color: { value: new THREE.Color("#000000") },
       },
       vertexShader: `
                 uniform float time;
@@ -116,14 +117,16 @@ export function GenerativeArtScene() {
                     
                     gl_FragColor = vec4(finalColor, 1.0);
                 }`,
-      wireframe: true
+      wireframe: true,
     });
     const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
+
     const pointLight = new THREE.PointLight(0xffffff, 1, 100);
     pointLight.position.set(0, 0, 5);
     lightRef.current = pointLight;
     scene.add(pointLight);
+
     let frameId: number;
     const animate = (t: number) => {
       material.uniforms.time.value = t * 0.0003;
@@ -133,6 +136,7 @@ export function GenerativeArtScene() {
       frameId = requestAnimationFrame(animate);
     };
     animate(0);
+
     const handleResize = () => {
       if (!currentMount) return;
       const isMobile = currentMount.clientWidth < 768;
@@ -141,8 +145,9 @@ export function GenerativeArtScene() {
       camera.updateProjectionMatrix();
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     };
+
     const handleMouseMove = (e: MouseEvent) => {
-      const x = e.clientX / window.innerWidth * 2 - 1;
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = -(e.clientY / window.innerHeight) * 2 + 1;
       const vec = new THREE.Vector3(x, y, 0.5).unproject(camera);
       const dir = vec.sub(camera.position).normalize();
@@ -153,8 +158,10 @@ export function GenerativeArtScene() {
         material.uniforms.pointLightPos.value = pos;
       }
     };
+
     window.addEventListener("resize", handleResize);
     window.addEventListener("mousemove", handleMouseMove);
+
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
@@ -164,19 +171,29 @@ export function GenerativeArtScene() {
       }
     };
   }, []);
+
   return <div ref={mountRef} className="absolute inset-0 w-full h-full z-0" />;
 }
+
 export function AnomalousMatterHero({
   title = "Observation Log: Anomaly 7",
   subtitle = "Matter in a state of constant, beautiful flux.",
-  description = "A new form of digital existence has been observed. It responds to stimuli, changes form, and exudes an unknown energy. Further study is required."
+  description = "A new form of digital existence has been observed. It responds to stimuli, changes form, and exudes an unknown energy. Further study is required.",
 }: {
   title?: string;
   subtitle?: string;
   description?: string;
 }) {
-  return <section role="banner" className="relative w-full h-screen bg-background text-foreground overflow-hidden">
-      <img src={logo} alt="Five Rivers Logo" className="absolute top-8 left-8 w-48 h-auto z-30 object-contain" />
+  return (
+    <section
+      role="banner"
+      className="relative w-full h-screen bg-background text-foreground overflow-hidden"
+    >
+      <img 
+        src={logo} 
+        alt="Five Rivers Logo" 
+        className="absolute top-8 left-8 w-48 h-auto z-30 object-contain"
+      />
       
       <Suspense fallback={<div className="w-full h-full bg-background" />}>
         <GenerativeArtScene />
@@ -184,18 +201,19 @@ export function AnomalousMatterHero({
 
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
 
-      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-8 md:pb-32 text-center">
-        <div className="max-w-3xl animate-fade-in-long px-0 my-[150px] mx-[20px] py-[10px]">
+      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-24 md:pb-32 text-center">
+        <div className="max-w-3xl px-4 animate-fade-in-long">
           <h1 className="text-sm font-mono tracking-widest text-foreground uppercase">
             {title}
           </h1>
           <p className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
             {subtitle}
           </p>
-          <p className="mt-10 max-w-xl mx-auto text-base leading-relaxed text-muted-foreground">
+          <p className="mt-6 max-w-xl mx-auto text-base leading-relaxed text-muted-foreground">
             {description}
           </p>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 }
