@@ -26,12 +26,14 @@ export function GenerativeArtScene() {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    // Limit pixel ratio to reduce GPU load on high-DPI displays
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     currentMount.appendChild(renderer.domElement);
 
     // Adjust mesh size for mobile
     const meshSize = isMobile ? 1.1 : 1.2;
-    const geometry = new THREE.IcosahedronGeometry(meshSize, 64);
+    // Reduce geometry complexity from 64 to 4 subdivisions for better performance
+    const geometry = new THREE.IcosahedronGeometry(meshSize, 4);
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
@@ -146,16 +148,30 @@ export function GenerativeArtScene() {
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     };
 
+    // Throttle mouse movements for performance
+    let mouseX = 0;
+    let mouseY = 0;
+    let mouseMoveScheduled = false;
+    
     const handleMouseMove = (e: MouseEvent) => {
-      const x = (e.clientX / window.innerWidth) * 2 - 1;
-      const y = -(e.clientY / window.innerHeight) * 2 + 1;
-      const vec = new THREE.Vector3(x, y, 0.5).unproject(camera);
-      const dir = vec.sub(camera.position).normalize();
-      const dist = -camera.position.z / dir.z;
-      const pos = camera.position.clone().add(dir.multiplyScalar(dist));
-      if (lightRef.current) {
-        lightRef.current.position.copy(pos);
-        material.uniforms.pointLightPos.value = pos;
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      
+      if (!mouseMoveScheduled) {
+        mouseMoveScheduled = true;
+        requestAnimationFrame(() => {
+          const x = (mouseX / window.innerWidth) * 2 - 1;
+          const y = -(mouseY / window.innerHeight) * 2 + 1;
+          const vec = new THREE.Vector3(x, y, 0.5).unproject(camera);
+          const dir = vec.sub(camera.position).normalize();
+          const dist = -camera.position.z / dir.z;
+          const pos = camera.position.clone().add(dir.multiplyScalar(dist));
+          if (lightRef.current) {
+            lightRef.current.position.copy(pos);
+            material.uniforms.pointLightPos.value = pos;
+          }
+          mouseMoveScheduled = false;
+        });
       }
     };
 
@@ -166,6 +182,12 @@ export function GenerativeArtScene() {
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
+      
+      // Properly dispose of Three.js resources
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
+      
       if (currentMount && renderer.domElement) {
         currentMount.removeChild(renderer.domElement);
       }
