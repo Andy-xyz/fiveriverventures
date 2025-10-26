@@ -15,17 +15,13 @@ import logo from "@/assets/logo.svg";
 export function GenerativeArtScene() {
   const mountRef = useRef<HTMLDivElement>(null);
   const lightRef = useRef<PointLight | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const initializedRef = useRef(false);
 
   useEffect(() => {
     const currentMount = mountRef.current;
     if (!currentMount) return;
 
-    // Defer Three.js initialization using Intersection Observer
+    // Defer Three.js initialization to avoid blocking main thread
     const initScene = () => {
-      if (initializedRef.current) return;
-      initializedRef.current = true;
       const scene = new Scene();
     
     // Adjust camera position based on viewport width for mobile
@@ -210,34 +206,16 @@ export function GenerativeArtScene() {
     };
     };
 
-    // Use Intersection Observer to initialize only when visible
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            // Use requestIdleCallback for even better performance
-            if ('requestIdleCallback' in window) {
-              (window as any).requestIdleCallback(initScene);
-            } else {
-              setTimeout(initScene, 100);
-            }
-            // Disconnect after initialization
-            if (observerRef.current) {
-              observerRef.current.disconnect();
-            }
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (currentMount) {
-      observerRef.current.observe(currentMount);
-    }
+    // Use requestIdleCallback to defer initialization, or setTimeout as fallback
+    const timeoutId = 'requestIdleCallback' in window
+      ? (window as any).requestIdleCallback(initScene)
+      : setTimeout(initScene, 1);
 
     return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
+      if ('requestIdleCallback' in window) {
+        (window as any).cancelIdleCallback(timeoutId);
+      } else {
+        clearTimeout(timeoutId);
       }
     };
   }, []);
