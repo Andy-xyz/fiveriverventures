@@ -20,9 +20,7 @@ export function GenerativeArtScene() {
     const currentMount = mountRef.current;
     if (!currentMount) return;
 
-    // Defer Three.js initialization to avoid blocking main thread
-    const initScene = () => {
-      const scene = new Scene();
+    const scene = new Scene();
     
     // Adjust camera position based on viewport width for mobile
     const isMobile = currentMount.clientWidth < 768;
@@ -202,20 +200,6 @@ export function GenerativeArtScene() {
       
       if (currentMount && renderer.domElement) {
         currentMount.removeChild(renderer.domElement);
-      }
-    };
-    };
-
-    // Use requestIdleCallback to defer initialization, or setTimeout as fallback
-    const timeoutId = 'requestIdleCallback' in window
-      ? (window as any).requestIdleCallback(initScene)
-      : setTimeout(initScene, 1);
-
-    return () => {
-      if ('requestIdleCallback' in window) {
-        (window as any).cancelIdleCallback(timeoutId);
-      } else {
-        clearTimeout(timeoutId);
       }
     };
   }, []);
