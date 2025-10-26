@@ -1,32 +1,24 @@
 import React, { useRef, useEffect, Suspense } from "react";
-import { 
-  Scene, 
-  PerspectiveCamera, 
-  WebGLRenderer, 
-  IcosahedronGeometry, 
-  ShaderMaterial, 
-  Color, 
-  Vector3, 
-  Mesh, 
-  PointLight 
-} from "three";
+import * as THREE from "three";
 import logo from "@/assets/logo.svg";
 
 export function GenerativeArtScene() {
   const mountRef = useRef<HTMLDivElement>(null);
-  const lightRef = useRef<PointLight | null>(null);
+  const lightRef = useRef<THREE.PointLight | null>(null);
 
   useEffect(() => {
     const currentMount = mountRef.current;
     if (!currentMount) return;
 
-    const scene = new Scene();
+    // Defer Three.js initialization to avoid blocking main thread
+    const initScene = () => {
+      const scene = new THREE.Scene();
     
     // Adjust camera position based on viewport width for mobile
     const isMobile = currentMount.clientWidth < 768;
     const cameraZ = isMobile ? 3.5 : 3;
     
-    const camera = new PerspectiveCamera(
+    const camera = new THREE.PerspectiveCamera(
       75,
       currentMount.clientWidth / currentMount.clientHeight,
       0.1,
@@ -34,7 +26,7 @@ export function GenerativeArtScene() {
     );
     camera.position.z = cameraZ;
 
-    const renderer = new WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     // Limit pixel ratio to reduce GPU load on high-DPI displays
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -43,12 +35,12 @@ export function GenerativeArtScene() {
     // Adjust mesh size for mobile
     const meshSize = isMobile ? 1.1 : 1.2;
     // Reduce geometry complexity from 64 to 4 subdivisions for better performance
-    const geometry = new IcosahedronGeometry(meshSize, 4);
-    const material = new ShaderMaterial({
+    const geometry = new THREE.IcosahedronGeometry(meshSize, 4);
+    const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        pointLightPos: { value: new Vector3(0, 0, 5) },
-        color: { value: new Color("#000000") },
+        pointLightPos: { value: new THREE.Vector3(0, 0, 5) },
+        color: { value: new THREE.Color("#000000") },
       },
       vertexShader: `
                 uniform float time;
@@ -131,10 +123,10 @@ export function GenerativeArtScene() {
                 }`,
       wireframe: true,
     });
-    const mesh = new Mesh(geometry, material);
+    const mesh = new THREE.Mesh(geometry, material);
     scene.add(mesh);
 
-    const pointLight = new PointLight(0xffffff, 1, 100);
+    const pointLight = new THREE.PointLight(0xffffff, 1, 100);
     pointLight.position.set(0, 0, 5);
     lightRef.current = pointLight;
     scene.add(pointLight);
@@ -172,7 +164,7 @@ export function GenerativeArtScene() {
         requestAnimationFrame(() => {
           const x = (mouseX / window.innerWidth) * 2 - 1;
           const y = -(mouseY / window.innerHeight) * 2 + 1;
-          const vec = new Vector3(x, y, 0.5).unproject(camera);
+          const vec = new THREE.Vector3(x, y, 0.5).unproject(camera);
           const dir = vec.sub(camera.position).normalize();
           const dist = -camera.position.z / dir.z;
           const pos = camera.position.clone().add(dir.multiplyScalar(dist));
@@ -200,6 +192,20 @@ export function GenerativeArtScene() {
       
       if (currentMount && renderer.domElement) {
         currentMount.removeChild(renderer.domElement);
+      }
+    };
+    };
+
+    // Use requestIdleCallback to defer initialization, or setTimeout as fallback
+    const timeoutId = 'requestIdleCallback' in window
+      ? (window as any).requestIdleCallback(initScene)
+      : setTimeout(initScene, 1);
+
+    return () => {
+      if ('requestIdleCallback' in window) {
+        (window as any).cancelIdleCallback(timeoutId);
+      } else {
+        clearTimeout(timeoutId);
       }
     };
   }, []);
