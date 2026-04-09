@@ -4,9 +4,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <AnomalousMatterHero
-        title="COMING IN LATE 2025"
+        title="COMING IN LATE 2026"
         subtitle=""
-        description="FIVE RIVER VENTURES IS A GLOBAL, EARLY-TO-MID STAGE VENTURE CAPITAL FIRM INVESTING IN TRANSFORMATIVE APPLICATION-LAYER AI COMPANIES."
+        description="FIVE RIVER VENTURES IS A GLOBAL, EARLY-TO-MID STAGE VENTURE CAPITAL FIRM BACKING FRONTIER, APPLICATION-LAYER AI COMPANIES SHAPING THE NEXT GENERATION OF GLOBAL OUTPUT."
       />
     </div>
   );
