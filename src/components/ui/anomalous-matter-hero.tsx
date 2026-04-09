@@ -34,7 +34,7 @@ export function GenerativeArtScene() {
           value: new THREE.Vector3(0, 0, 5)
         },
         color: {
-          value: new THREE.Color("#222222")
+          value: new THREE.Color("#333333")
         }
       },
       vertexShader: `
