@@ -11,7 +11,7 @@ export function GenerativeArtScene() {
 
     // Adjust camera position based on viewport width for mobile
     const isMobile = currentMount.clientWidth < 768;
-    const cameraZ = isMobile ? 3.5 : 3;
+    const cameraZ = 3.5;
     const camera = new THREE.PerspectiveCamera(75, currentMount.clientWidth / currentMount.clientHeight, 0.1, 1000);
     camera.position.z = cameraZ;
     const renderer = new THREE.WebGLRenderer({
@@ -136,7 +136,7 @@ export function GenerativeArtScene() {
     const handleResize = () => {
       if (!currentMount) return;
       const isMobile = currentMount.clientWidth < 768;
-      camera.position.z = isMobile ? 3.5 : 3;
+      camera.position.z = 3.5;
       camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
