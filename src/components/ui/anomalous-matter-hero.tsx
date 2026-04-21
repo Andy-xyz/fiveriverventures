@@ -209,25 +209,3 @@ export function AnomalousMatterHero({
       </div>
     </section>;
 }
-      
-      <Suspense fallback={<div className="w-full h-full bg-background" />}>
-        <GenerativeArtScene />
-      </Suspense>
-
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
-
-      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-8 md:pb-32 text-center">
-        <div className="max-w-3xl animate-fade-in-long px-0 my-[150px] mx-[20px] py-[10px]">
-          <h1 className="text-sm font-mono tracking-widest text-foreground uppercase">
-            {title}
-          </h1>
-          <p className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
-            {subtitle}
-          </p>
-          <p className="mt-10 max-w-xl mx-auto text-base leading-relaxed text-foreground uppercase">
-            {description}
-          </p>
-        </div>
-      </div>
-    </section>;
-}
