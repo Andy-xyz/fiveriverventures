@@ -177,14 +177,38 @@ export function AnomalousMatterHero({
   description?: string;
 }) {
   return <section role="banner" className="relative w-full h-screen bg-background text-foreground overflow-hidden">
-      <img src={logo} alt="Five Rivers Logo" className="absolute top-8 left-8 w-48 h-auto z-30 object-contain" />
+      <div className="absolute top-4 md:top-8 left-0 right-0 px-4 md:px-8 z-30 flex items-start justify-between gap-4">
+        <img src={logo} alt="Five Rivers Logo" className="w-32 md:w-48 h-auto object-contain" />
+        <a
+          href="/lp-login"
+          className="text-xs md:text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity mt-2"
+        >
+          LP Login
+        </a>
+      </div>
       <TimeDisplay />
-      <a
-        href="/lp-login"
-        className="absolute top-8 right-8 z-30 text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity"
-      >
-        LP Login
-      </a>
+
+      <Suspense fallback={<div className="w-full h-full bg-background" />}>
+        <GenerativeArtScene />
+      </Suspense>
+
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
+
+      <div className="relative z-20 flex flex-col items-center justify-end h-full pb-8 md:pb-32 text-center">
+        <div className="max-w-3xl animate-fade-in-long px-0 my-[150px] mx-[20px] py-[10px]">
+          <h1 className="text-sm font-mono tracking-widest text-foreground uppercase">
+            {title}
+          </h1>
+          <p className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
+            {subtitle}
+          </p>
+          <p className="mt-10 max-w-xl mx-auto text-base leading-relaxed text-foreground uppercase">
+            {description}
+          </p>
+        </div>
+      </div>
+    </section>;
+}
       
       <Suspense fallback={<div className="w-full h-full bg-background" />}>
         <GenerativeArtScene />
