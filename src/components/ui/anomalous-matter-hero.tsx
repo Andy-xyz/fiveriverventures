@@ -180,8 +180,9 @@ export function AnomalousMatterHero({
       <div className="absolute top-4 md:top-8 left-0 right-0 px-4 md:px-8 z-30 flex items-start justify-between gap-4">
         <img src={logo} alt="Five Rivers Logo" className="w-32 md:w-48 h-auto object-contain" />
         <a
-          href="/lp-login"
-          className="text-xs md:text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity mt-2"
+          href="#"
+          onClick={(e) => e.preventDefault()}
+          className="text-xs md:text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity mt-2 cursor-pointer"
         >
           LP Login
         </a>
