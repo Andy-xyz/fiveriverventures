@@ -39,13 +39,6 @@ export function TimeDisplay() {
       <div className="text-sm tracking-widest uppercase">
         {formatDate(now)} {localTime}
       </div>
-      <div className="mt-2 flex gap-4 text-xs tracking-widest uppercase opacity-80">
-        {ZONES.map((z) => (
-          <span key={z.label}>
-            {z.label} {formatTimeInZone(now, z.tz)}
-          </span>
-        ))}
-      </div>
     </div>
   );
 }
