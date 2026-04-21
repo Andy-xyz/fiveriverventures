@@ -6,7 +6,7 @@ const Index = () => {
       <AnomalousMatterHero
         title="COMING IN LATE 2026"
         subtitle=""
-        description="FIVE RIVER VENTURES IS A GLOBAL, EARLY-TO-MID STAGE VENTURE CAPITAL FIRM BACKING FRONTIER, APPLICATION-LAYER AI COMPANIES SHAPING THE NEXT GENERATION OF GLOBAL OUTPUT."
+        description="Five River Ventures backs frontier, application-layer AI companies solving the world's most challenging problems. As an operating partner as well as an investor, Five River Ventures is agnostic to sector, geography, or stage."
       />
     </div>
   );
