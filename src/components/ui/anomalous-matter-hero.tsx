@@ -198,7 +198,7 @@ export function AnomalousMatterHero({
           <p className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
             {subtitle}
           </p>
-          <p className="mt-10 max-w-xl mx-auto text-base leading-relaxed text-foreground">
+          <p className="mt-10 max-w-xl mx-auto text-base leading-relaxed text-foreground uppercase">
             {description}
           </p>
         </div>
