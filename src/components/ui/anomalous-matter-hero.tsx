@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, Suspense } from "react";
 import * as THREE from "three";
 import logo from "@/assets/logo.svg";
+import { TimeDisplay } from "@/components/ui/time-display";
 export function GenerativeArtScene() {
   const mountRef = useRef<HTMLDivElement>(null);
   const lightRef = useRef<THREE.PointLight | null>(null);
@@ -177,6 +178,7 @@ export function AnomalousMatterHero({
 }) {
   return <section role="banner" className="relative w-full h-screen bg-background text-foreground overflow-hidden">
       <img src={logo} alt="Five Rivers Logo" className="absolute top-8 left-8 w-48 h-auto z-30 object-contain" />
+      <TimeDisplay />
       <a
         href="/lp-login"
         className="absolute top-8 right-8 z-30 text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity"
