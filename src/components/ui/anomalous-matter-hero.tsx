@@ -177,6 +177,12 @@ export function AnomalousMatterHero({
 }) {
   return <section role="banner" className="relative w-full h-screen bg-background text-foreground overflow-hidden">
       <img src={logo} alt="Five Rivers Logo" className="absolute top-8 left-8 w-48 h-auto z-30 object-contain" />
+      <a
+        href="/lp-login"
+        className="absolute top-8 right-8 z-30 text-xs font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity"
+      >
+        LP Login
+      </a>
       
       <Suspense fallback={<div className="w-full h-full bg-background" />}>
         <GenerativeArtScene />
