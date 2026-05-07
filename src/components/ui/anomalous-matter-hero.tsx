@@ -177,17 +177,24 @@ export function AnomalousMatterHero({
   description?: string;
 }) {
   return <section role="banner" className="relative w-full h-screen bg-background text-foreground overflow-hidden">
-      <div className="absolute top-4 md:top-8 left-0 right-0 px-4 md:px-8 z-30 flex items-start justify-between gap-4">
+      <div className="absolute top-4 md:top-8 left-0 px-4 md:px-8 z-30">
         <img src={logo} alt="Five Rivers Logo" className="w-32 md:w-48 h-auto object-contain" />
-        <a
-          href="#"
-          onClick={(e) => e.preventDefault()}
-          className="text-xs md:text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity mt-2 cursor-pointer"
-        >
-          LP Login
-        </a>
       </div>
+      <a
+        href="#"
+        onClick={(e) => e.preventDefault()}
+        className="absolute top-16 md:top-8 right-4 md:right-8 z-30 text-xs md:text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity cursor-pointer"
+      >
+        LP Login
+      </a>
       <TimeDisplay />
+
+      <a
+        href="mailto:andy@fiverriver.vc"
+        className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-30 text-xs md:text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity cursor-pointer"
+      >
+        Contact
+      </a>
 
       <Suspense fallback={<div className="w-full h-full bg-background" />}>
         <GenerativeArtScene />
