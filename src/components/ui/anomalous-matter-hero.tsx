@@ -190,7 +190,7 @@ export function AnomalousMatterHero({
       <TimeDisplay />
 
       <a
-        href="mailto:andy@fiverriver.vc"
+        href="mailto:andy@fiveriver.vc"
         className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 z-30 text-xs md:text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity cursor-pointer"
       >
         Contact
