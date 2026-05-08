@@ -30,26 +30,20 @@ export function GenerativeArtScene() {
 
     // Adjust mesh size for mobile
     const meshSize = isMobile ? 1.1 : 1.2;
-    const geometry = new THREE.IcosahedronGeometry(meshSize, 24);
+    const geometry = new THREE.IcosahedronGeometry(meshSize, 14);
     const material = new THREE.MeshBasicMaterial({
       color: new THREE.Color("#333333"),
       wireframe: true,
       transparent: true,
-      opacity: 0.56
+      opacity: 0.42
     });
     const positions = geometry.attributes.position as THREE.BufferAttribute;
     const basePositions = Float32Array.from(positions.array as ArrayLike<number>);
-    const vertexSeeds = new Float32Array(positions.count);
     const direction = new THREE.Vector3();
     const targetRotation = new THREE.Vector2(0, 0);
     const currentRotation = new THREE.Vector2(0, 0);
     let hoverStrength = 0;
     let targetHoverStrength = 0;
-
-    for (let i = 0; i < positions.count; i++) {
-      const seededValue = Math.sin(i * 12.9898) * 43758.5453;
-      vertexSeeds[i] = seededValue - Math.floor(seededValue);
-    }
 
     const mesh = new THREE.Mesh(geometry, material);
     mesh.rotation.x = -0.16;
@@ -70,11 +64,10 @@ export function GenerativeArtScene() {
         direction.set(x, y, z);
         const radius = direction.length();
         direction.normalize();
-        const seed = vertexSeeds[i];
-        const waveA = Math.sin(direction.x * 4.2 + time * 1.15 + seed * Math.PI * 2);
-        const waveB = Math.cos(direction.y * 3.6 - time * 0.9 + seed * 9.0);
-        const waveC = Math.sin((direction.z + direction.x) * 3.1 + time * 0.7 + seed * 5.0);
-        const displacement = (waveA * 0.075 + waveB * 0.05 + waveC * 0.035) * (1 + hoverStrength * 0.22);
+        const waveA = Math.sin(direction.x * 2.1 + time * 0.9);
+        const waveB = Math.cos(direction.y * 2.4 - time * 0.7);
+        const waveC = Math.sin(direction.z * 2.0 + time * 0.6);
+        const displacement = (waveA * 0.04 + waveB * 0.035 + waveC * 0.03) * (1 + hoverStrength * 0.12);
         const scaledRadius = radius * (1 + displacement);
         positions.setXYZ(i, direction.x * scaledRadius, direction.y * scaledRadius, direction.z * scaledRadius);
       }
@@ -83,8 +76,8 @@ export function GenerativeArtScene() {
       mesh.rotation.y += 0.0018 + currentRotation.x * 0.015;
       mesh.rotation.x = -0.16 + currentRotation.y * 0.12 + Math.sin(time * 0.9) * 0.04;
       mesh.rotation.z = Math.sin(time * 0.55) * 0.05;
-      mesh.scale.setScalar(1 + hoverStrength * 0.035);
-      material.opacity = 0.56 - hoverStrength * 0.08 + (Math.sin(time * 1.2) + 1) * 0.015;
+      mesh.scale.setScalar(1 + hoverStrength * 0.018);
+      material.opacity = 0.42 - hoverStrength * 0.04 + (Math.sin(time * 1.2) + 1) * 0.01;
       renderer.render(scene, camera);
       frameId = requestAnimationFrame(animate);
     };
