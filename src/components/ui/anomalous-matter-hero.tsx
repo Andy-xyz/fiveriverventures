@@ -6,12 +6,12 @@ import { TimeDisplay } from "@/components/ui/time-display";
 const HERO_TEXT_BOTTOM = "clamp(120px, 14svh, 180px)";
 
 const readSceneColor = (token: string, fallback: string) => {
-  if (typeof window === "undefined") {
-    return new THREE.Color(`hsl(${fallback})`);
-  }
+  const rawValue = typeof window === "undefined"
+    ? fallback
+    : getComputedStyle(document.documentElement).getPropertyValue(token).trim() || fallback;
 
-  const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-  return new THREE.Color(`hsl(${value || fallback})`);
+  const [hue = "0", saturation = "0%", lightness = "0%"] = rawValue.split(/\s+/);
+  return new THREE.Color().setHSL(Number.parseFloat(hue) / 360, Number.parseFloat(saturation) / 100, Number.parseFloat(lightness) / 100);
 };
 
 export function GenerativeArtScene() {
@@ -39,10 +39,11 @@ export function GenerativeArtScene() {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.NoToneMapping;
     renderer.setClearColor(backgroundColor, 1);
+    renderer.domElement.style.opacity = "0.82";
     currentMount.appendChild(renderer.domElement);
 
     const meshSize = isMobile ? 1.08 : 1.16;
-    const geometry = new THREE.IcosahedronGeometry(meshSize, 64);
+    const geometry = new THREE.IcosahedronGeometry(meshSize, 28);
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
@@ -129,12 +130,12 @@ export function GenerativeArtScene() {
 
         void main() {
           vec3 normal = normalize(vWorldNormal);
-          vec3 lightDir = normalize(vec3(-0.25, 0.8, 1.25));
+          vec3 lightDir = normalize(vec3(-0.2, 0.85, 1.3));
           vec3 viewDir = normalize(cameraPosition - vWorldPosition);
           float diffuse = max(dot(normal, lightDir), 0.0);
           float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 1.8);
-          float brightness = 0.78 + diffuse * 0.24 + fresnel * 0.18;
-          float alpha = 0.2 + diffuse * 0.08 + fresnel * 0.06;
+          float brightness = 0.88 + diffuse * 0.16 + fresnel * 0.12;
+          float alpha = 0.3 + diffuse * 0.12 + fresnel * 0.08;
           gl_FragColor = vec4(color * brightness, alpha);
         }
       `,
