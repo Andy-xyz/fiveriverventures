@@ -5,8 +5,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <AnomalousMatterHero
         title="COMING IN LATE 2026"
-        subtitle=""
-        description="VENTURE CAPITAL REIMAGINED. BACKING THE WORLD'S MOST AMBITIOUS FOUNDERS SOLVING THE WORLD'S HARDEST PROBLEMS - FROM DAY ZERO TO SCALE, ANYWHERE IN THE WORLD."
+        subtitle="VENTURE CAPITAL REIMAGINED."
+        description="BACKING THE WORLD'S MOST AMBITIOUS FOUNDERS SOLVING THE WORLD'S HARDEST PROBLEMS - FROM DAY ZERO TO SCALE, ANYWHERE IN THE WORLD."
       />
     </div>
   );
