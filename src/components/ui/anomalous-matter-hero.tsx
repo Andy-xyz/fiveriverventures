@@ -183,7 +183,7 @@ export function AnomalousMatterHero({
       <a
         href="#"
         onClick={(e) => e.preventDefault()}
-        className="absolute top-16 md:top-8 right-4 md:right-8 z-30 text-xs md:text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity cursor-pointer"
+        className="absolute top-4 md:top-8 right-4 md:right-8 z-30 text-xs md:text-sm font-mono tracking-widest uppercase text-foreground hover:opacity-70 transition-opacity cursor-pointer"
       >
         LP Login
       </a>
