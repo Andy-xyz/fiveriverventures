@@ -3,7 +3,7 @@ import * as THREE from "three";
 import logo from "@/assets/logo.svg";
 import { TimeDisplay } from "@/components/ui/time-display";
 
-const HERO_TEXT_BOTTOM = "clamp(88px, 10svh, 120px)";
+const HERO_TEXT_BOTTOM = "clamp(100px, 11svh, 140px)";
 
 export function GenerativeArtScene() {
   const mountRef = useRef<HTMLDivElement>(null);
