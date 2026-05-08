@@ -151,7 +151,7 @@ export function GenerativeArtScene() {
       const pos = camera.position.clone().add(dir.multiplyScalar(dist));
       if (lightRef.current) {
         lightRef.current.position.copy(pos);
-        material.uniforms.pointLightPos.value = pos;
+        material.uniforms.pointLightPosition.value = pos;
       }
     };
     window.addEventListener("resize", handleResize);
