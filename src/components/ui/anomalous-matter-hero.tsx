@@ -95,11 +95,12 @@ export function GenerativeArtScene() {
         }
 
         void main() {
-          vec3 samplePoint = position * 1.85;
-          float waveA = snoise(samplePoint + vec3(time * 0.38));
-          float waveB = snoise(samplePoint * 0.72 - vec3(time * 0.24));
-          float displacement = waveA * 0.15 + waveB * 0.08;
-          displacement *= 1.0 + hover * 0.18;
+          vec3 samplePoint = normalize(position) * 1.35;
+          float waveA = snoise(samplePoint + vec3(time * 0.24));
+          float waveB = snoise(samplePoint * 0.58 - vec3(time * 0.16));
+          float pulse = sin(time * 0.55 + position.y * 1.2) * 0.012;
+          float displacement = waveA * 0.055 + waveB * 0.028 + pulse;
+          displacement *= 1.0 + hover * 0.08;
 
           vec3 displacedPosition = position + normal * displacement;
           vec4 worldPosition = modelMatrix * vec4(displacedPosition, 1.0);
