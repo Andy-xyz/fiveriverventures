@@ -31,7 +31,7 @@ export function GenerativeArtScene() {
         time: {
           value: 0
         },
-        pointLightPos: {
+        pointLightPosition: {
           value: new THREE.Vector3(0, 0, 5)
         },
         color: {
