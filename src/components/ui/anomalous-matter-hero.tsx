@@ -22,6 +22,7 @@ export function GenerativeArtScene() {
     const scene = new THREE.Scene();
     const backgroundColor = readSceneColor("--background", "30 8% 88%");
     const wireframeColor = readSceneColor("--hero-wireframe", "0 0% 34%");
+    const isWindows = typeof navigator !== "undefined" && /Windows/i.test(navigator.userAgent);
 
     // Adjust camera position based on viewport width for mobile
     const isMobile = currentMount.clientWidth < 768;
@@ -39,7 +40,8 @@ export function GenerativeArtScene() {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.NoToneMapping;
     renderer.setClearColor(backgroundColor, 1);
-    renderer.domElement.style.opacity = "0.82";
+    renderer.domElement.style.opacity = isWindows ? "0.68" : "0.82";
+    renderer.domElement.style.filter = isWindows ? "brightness(1.24) contrast(0.82)" : "none";
     currentMount.appendChild(renderer.domElement);
 
     const meshSize = isMobile ? 1.08 : 1.16;
@@ -47,7 +49,7 @@ export function GenerativeArtScene() {
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        color: { value: wireframeColor },
+        color: { value: isWindows ? wireframeColor.clone().lerp(backgroundColor, 0.3) : wireframeColor },
         hover: { value: 0 }
       },
       vertexShader: `
