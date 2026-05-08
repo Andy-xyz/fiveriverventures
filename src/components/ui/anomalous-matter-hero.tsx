@@ -5,12 +5,23 @@ import { TimeDisplay } from "@/components/ui/time-display";
 
 const HERO_TEXT_BOTTOM = "clamp(120px, 14svh, 180px)";
 
+const readSceneColor = (token: string, fallback: string) => {
+  if (typeof window === "undefined") {
+    return new THREE.Color(`hsl(${fallback})`);
+  }
+
+  const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+  return new THREE.Color(`hsl(${value || fallback})`);
+};
+
 export function GenerativeArtScene() {
   const mountRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const currentMount = mountRef.current;
     if (!currentMount) return;
     const scene = new THREE.Scene();
+    const backgroundColor = readSceneColor("--background", "30 8% 88%");
+    const wireframeColor = readSceneColor("--hero-wireframe", "0 0% 34%");
 
     // Adjust camera position based on viewport width for mobile
     const isMobile = currentMount.clientWidth < 768;
@@ -19,13 +30,15 @@ export function GenerativeArtScene() {
     camera.position.z = cameraZ;
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: true,
+      alpha: false,
+      premultipliedAlpha: false,
       powerPreference: "high-performance"
     });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setClearColor(0x000000, 0);
+    renderer.toneMapping = THREE.NoToneMapping;
+    renderer.setClearColor(backgroundColor, 1);
     currentMount.appendChild(renderer.domElement);
 
     const meshSize = isMobile ? 1.08 : 1.16;
@@ -33,7 +46,7 @@ export function GenerativeArtScene() {
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        color: { value: new THREE.Color("#333333") },
+        color: { value: wireframeColor },
         hover: { value: 0 }
       },
       vertexShader: `
@@ -116,12 +129,13 @@ export function GenerativeArtScene() {
 
         void main() {
           vec3 normal = normalize(vWorldNormal);
-          vec3 lightDir = normalize(vec3(-0.35, 0.55, 1.0));
+          vec3 lightDir = normalize(vec3(-0.25, 0.8, 1.25));
           vec3 viewDir = normalize(cameraPosition - vWorldPosition);
           float diffuse = max(dot(normal, lightDir), 0.0);
-          float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.0);
-          float brightness = 0.44 + diffuse * 0.28 + fresnel * 0.22;
-          gl_FragColor = vec4(color * brightness, 0.62);
+          float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 1.8);
+          float brightness = 0.78 + diffuse * 0.24 + fresnel * 0.18;
+          float alpha = 0.2 + diffuse * 0.08 + fresnel * 0.06;
+          gl_FragColor = vec4(color * brightness, alpha);
         }
       `,
       wireframe: true,
