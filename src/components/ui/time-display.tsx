@@ -39,6 +39,9 @@ export function TimeDisplay() {
       <div className="text-xs md:text-sm tracking-widest uppercase">
         {formatDate(now)} {localTime}
       </div>
+      <div className="mt-1 text-xs md:text-sm tracking-widest uppercase">
+        Los Angeles | San Francisco | New York City
+      </div>
     </div>
   );
 }
