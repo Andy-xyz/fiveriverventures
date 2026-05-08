@@ -96,8 +96,8 @@ export function GenerativeArtScene() {
 
         void main() {
           vec3 samplePoint = position * 1.85;
-          float waveA = snoise(samplePoint + vec3(time * 0.38));
-          float waveB = snoise(samplePoint * 0.72 - vec3(time * 0.24));
+          float waveA = snoise(samplePoint + vec3(time * 0.18));
+          float waveB = snoise(samplePoint * 0.72 - vec3(time * 0.12));
           float displacement = waveA * 0.15 + waveB * 0.08;
           displacement *= 1.0 + hover * 0.18;
 
@@ -146,9 +146,9 @@ export function GenerativeArtScene() {
 
       material.uniforms.time.value = time;
       material.uniforms.hover.value = hoverStrength;
-      mesh.rotation.y += 0.0012 + currentRotation.x * 0.01;
-      mesh.rotation.x = -0.18 + currentRotation.y * 0.08 + Math.sin(time * 0.6) * 0.03;
-      mesh.rotation.z = Math.sin(time * 0.35) * 0.04;
+      mesh.rotation.y += 0.0005 + currentRotation.x * 0.01;
+      mesh.rotation.x = -0.18 + currentRotation.y * 0.08 + Math.sin(time * 0.25) * 0.03;
+      mesh.rotation.z = Math.sin(time * 0.15) * 0.04;
       mesh.scale.setScalar(1 + hoverStrength * 0.02);
 
       renderer.render(scene, camera);
