@@ -5,12 +5,24 @@ import { TimeDisplay } from "@/components/ui/time-display";
 
 const HERO_TEXT_BOTTOM = "clamp(120px, 14svh, 180px)";
 
+const readSceneColor = (token: string, fallback: string) => {
+  const rawValue = typeof window === "undefined"
+    ? fallback
+    : getComputedStyle(document.documentElement).getPropertyValue(token).trim() || fallback;
+
+  const [hue = "0", saturation = "0%", lightness = "0%"] = rawValue.split(/\s+/);
+  return new THREE.Color().setHSL(Number.parseFloat(hue) / 360, Number.parseFloat(saturation) / 100, Number.parseFloat(lightness) / 100);
+};
+
 export function GenerativeArtScene() {
   const mountRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const currentMount = mountRef.current;
     if (!currentMount) return;
     const scene = new THREE.Scene();
+    const backgroundColor = readSceneColor("--background", "30 8% 88%");
+    const wireframeColor = readSceneColor("--hero-wireframe", "0 0% 34%");
+    const isWindows = typeof navigator !== "undefined" && /Windows/i.test(navigator.userAgent);
 
     // Adjust camera position based on viewport width for mobile
     const isMobile = currentMount.clientWidth < 768;
@@ -19,21 +31,25 @@ export function GenerativeArtScene() {
     camera.position.z = cameraZ;
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: true,
+      alpha: false,
+      premultipliedAlpha: false,
       powerPreference: "high-performance"
     });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setClearColor(0x000000, 0);
+    renderer.toneMapping = THREE.NoToneMapping;
+    renderer.setClearColor(backgroundColor, 1);
+    renderer.domElement.style.opacity = isWindows ? "0.68" : "0.82";
+    renderer.domElement.style.filter = isWindows ? "brightness(1.24) contrast(0.82)" : "none";
     currentMount.appendChild(renderer.domElement);
 
     const meshSize = isMobile ? 1.08 : 1.16;
-    const geometry = new THREE.IcosahedronGeometry(meshSize, 64);
+    const geometry = new THREE.IcosahedronGeometry(meshSize, 28);
     const material = new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        color: { value: new THREE.Color("#333333") },
+        color: { value: isWindows ? wireframeColor.clone().lerp(backgroundColor, 0.3) : wireframeColor },
         hover: { value: 0 }
       },
       vertexShader: `
@@ -116,12 +132,13 @@ export function GenerativeArtScene() {
 
         void main() {
           vec3 normal = normalize(vWorldNormal);
-          vec3 lightDir = normalize(vec3(-0.35, 0.55, 1.0));
+          vec3 lightDir = normalize(vec3(-0.2, 0.85, 1.3));
           vec3 viewDir = normalize(cameraPosition - vWorldPosition);
           float diffuse = max(dot(normal, lightDir), 0.0);
-          float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 2.0);
-          float brightness = 0.44 + diffuse * 0.28 + fresnel * 0.22;
-          gl_FragColor = vec4(color * brightness, 0.62);
+          float fresnel = pow(1.0 - max(dot(normal, viewDir), 0.0), 1.8);
+          float brightness = 0.88 + diffuse * 0.16 + fresnel * 0.12;
+          float alpha = 0.3 + diffuse * 0.12 + fresnel * 0.08;
+          gl_FragColor = vec4(color * brightness, alpha);
         }
       `,
       wireframe: true,

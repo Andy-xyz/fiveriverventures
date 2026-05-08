@@ -40,6 +40,7 @@ All colors MUST be HSL.
 
     --sky-300: 203 92% 53%;
     --gray-300: 0 0% 70%;
+    --hero-wireframe: 0 0% 34%;
 
     --sidebar-background: 0 0% 5%;
     --sidebar-foreground: 0 0% 90%;
@@ -49,6 +50,7 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 20%;
     --sidebar-ring: 203 92% 53%;
+    --hero-wireframe: 0 0% 34%;
   }
 
   .dark {
