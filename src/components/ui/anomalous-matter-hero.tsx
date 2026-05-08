@@ -3,7 +3,7 @@ import * as THREE from "three";
 import logo from "@/assets/logo.svg";
 import { TimeDisplay } from "@/components/ui/time-display";
 
-const HERO_TEXT_BOTTOM = "max(20svh, 132px)";
+const HERO_TEXT_BOTTOM = "clamp(88px, 10svh, 120px)";
 
 export function GenerativeArtScene() {
   const mountRef = useRef<HTMLDivElement>(null);
@@ -139,10 +139,10 @@ export function AnomalousMatterHero({
           <h1 className="text-sm font-mono tracking-widest text-foreground uppercase">
             {title}
           </h1>
-          <p className="mt-4 text-3xl md:text-5xl font-bold leading-tight">
+          <p className="mt-4 text-3xl md:text-5xl font-bold leading-tight min-h-[1lh]">
             {subtitle}
           </p>
-          <p className="mt-10 max-w-xl mx-auto text-base leading-relaxed text-foreground uppercase">
+          <p className="mt-6 max-w-xl mx-auto text-base leading-[1.55] text-foreground uppercase">
             {description}
           </p>
         </div>
