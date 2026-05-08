@@ -17,10 +17,13 @@ export function GenerativeArtScene() {
     camera.position.z = cameraZ;
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
-      alpha: true
+      alpha: true,
+      powerPreference: "high-performance"
     });
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.setClearColor(0x000000, 0);
     currentMount.appendChild(renderer.domElement);
 
     // Adjust mesh size for mobile
@@ -39,9 +42,10 @@ export function GenerativeArtScene() {
         }
       },
       vertexShader: `
+                precision highp float;
                 uniform float time;
-                varying vec3 vNormal;
-                varying vec3 vPosition;
+                varying vec3 vWorldNormal;
+                varying vec3 vWorldPosition;
                 
                 // Perlin Noise function
                 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -92,28 +96,31 @@ export function GenerativeArtScene() {
                 }
 
                 void main() {
-                    vNormal = normal;
-                    vPosition = position;
                     float displacement = snoise(position * 2.0 + time * 0.5) * 0.2;
-                    vec3 newPosition = position + normal * displacement;
-                    gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+                    vec3 displacedPosition = position + normal * displacement;
+                    vec4 worldPosition = modelMatrix * vec4(displacedPosition, 1.0);
+                    vWorldPosition = worldPosition.xyz;
+                    vWorldNormal = normalize(mat3(modelMatrix) * normal);
+                    gl_Position = projectionMatrix * viewMatrix * worldPosition;
                 }`,
       fragmentShader: `
+                precision highp float;
                 uniform vec3 color;
                 uniform vec3 pointLightPosition;
-                varying vec3 vNormal;
-                varying vec3 vPosition;
+                varying vec3 vWorldNormal;
+                varying vec3 vWorldPosition;
                 
                 void main() {
-                    vec3 normal = normalize(vNormal);
-                    vec3 lightDir = normalize(pointLightPosition - vPosition);
+                    vec3 normal = normalize(vWorldNormal);
+                    vec3 lightDir = normalize(pointLightPosition - vWorldPosition);
+                    vec3 viewDir = normalize(cameraPosition - vWorldPosition);
                     float diffuse = max(dot(normal, lightDir), 0.0);
+                    float ambient = 0.38;
                     
-                    // Fresnel effect for the glow
-                    float fresnel = 1.0 - dot(normal, vec3(0.0, 0.0, 1.0));
+                    float fresnel = 1.0 - max(dot(normal, viewDir), 0.0);
                     fresnel = pow(fresnel, 2.0);
                     
-                    vec3 finalColor = color * diffuse + color * fresnel * 0.5;
+                    vec3 finalColor = color * (ambient + diffuse * 0.72 + fresnel * 0.22);
                     
                     gl_FragColor = vec4(finalColor, 1.0);
                 }`,
@@ -202,8 +209,8 @@ export function AnomalousMatterHero({
 
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent z-10" />
 
-      <div className="absolute bottom-0 left-0 right-0 z-20 flex flex-col items-center text-center pb-[180px] md:pb-[280px] px-5">
-        <div className="max-w-3xl animate-fade-in-long">
+      <div className="absolute left-1/2 bottom-[72px] md:bottom-[108px] lg:bottom-[132px] z-20 w-full max-w-3xl -translate-x-1/2 px-5 text-center">
+        <div className="animate-fade-in-long">
           <h1 className="text-sm font-mono tracking-widest text-foreground uppercase">
             {title}
           </h1>
