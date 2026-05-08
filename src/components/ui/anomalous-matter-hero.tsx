@@ -7,7 +7,6 @@ const HERO_TEXT_BOTTOM = "clamp(88px, 10svh, 120px)";
 
 export function GenerativeArtScene() {
   const mountRef = useRef<HTMLDivElement>(null);
-  const lightRef = useRef<THREE.PointLight | null>(null);
   useEffect(() => {
     const currentMount = mountRef.current;
     if (!currentMount) return;
@@ -31,40 +30,61 @@ export function GenerativeArtScene() {
 
     // Adjust mesh size for mobile
     const meshSize = isMobile ? 1.1 : 1.2;
-    const geometry = new THREE.IcosahedronGeometry(meshSize, 64);
+    const geometry = new THREE.IcosahedronGeometry(meshSize, 24);
     const material = new THREE.MeshBasicMaterial({
       color: new THREE.Color("#333333"),
       wireframe: true,
       transparent: true,
-      opacity: 0.68
+      opacity: 0.56
     });
-    const basePositions = geometry.attributes.position.array.slice() as Float32Array;
+    const positions = geometry.attributes.position as THREE.BufferAttribute;
+    const basePositions = Float32Array.from(positions.array as ArrayLike<number>);
+    const vertexSeeds = new Float32Array(positions.count);
+    const direction = new THREE.Vector3();
+    const targetRotation = new THREE.Vector2(0, 0);
+    const currentRotation = new THREE.Vector2(0, 0);
+    let hoverStrength = 0;
+    let targetHoverStrength = 0;
+
+    for (let i = 0; i < positions.count; i++) {
+      const seededValue = Math.sin(i * 12.9898) * 43758.5453;
+      vertexSeeds[i] = seededValue - Math.floor(seededValue);
+    }
+
     const mesh = new THREE.Mesh(geometry, material);
+    mesh.rotation.x = -0.16;
+    mesh.rotation.y = 0.24;
     scene.add(mesh);
-    const pointLight = new THREE.PointLight(0xffffff, 0, 100);
-    pointLight.position.set(0, 0, 5);
-    lightRef.current = pointLight;
-    scene.add(pointLight);
+
     let frameId: number;
     const animate = (t: number) => {
-      const positions = geometry.attributes.position;
-      const time = t * 0.00045;
+      const time = t * 0.0004;
+      hoverStrength += (targetHoverStrength - hoverStrength) * 0.06;
+      currentRotation.lerp(targetRotation, 0.045);
+
       for (let i = 0; i < positions.count; i++) {
         const index = i * 3;
         const x = basePositions[index];
         const y = basePositions[index + 1];
         const z = basePositions[index + 2];
-        const vertex = new THREE.Vector3(x, y, z);
-        const radius = vertex.length();
-        const noise = Math.sin(x * 2.4 + time) * Math.cos(y * 2.1 - time * 1.1) * Math.sin(z * 2.8 + time * 0.7);
-        const offset = 1 + noise * 0.16;
-        vertex.normalize().multiplyScalar(radius * offset);
-        positions.setXYZ(i, vertex.x, vertex.y, vertex.z);
+        direction.set(x, y, z);
+        const radius = direction.length();
+        direction.normalize();
+        const seed = vertexSeeds[i];
+        const waveA = Math.sin(direction.x * 4.2 + time * 1.15 + seed * Math.PI * 2);
+        const waveB = Math.cos(direction.y * 3.6 - time * 0.9 + seed * 9.0);
+        const waveC = Math.sin((direction.z + direction.x) * 3.1 + time * 0.7 + seed * 5.0);
+        const displacement = (waveA * 0.075 + waveB * 0.05 + waveC * 0.035) * (1 + hoverStrength * 0.22);
+        const scaledRadius = radius * (1 + displacement);
+        positions.setXYZ(i, direction.x * scaledRadius, direction.y * scaledRadius, direction.z * scaledRadius);
       }
+
       positions.needsUpdate = true;
-      geometry.computeVertexNormals();
-      mesh.rotation.y += 0.0005;
-      mesh.rotation.x += 0.0002;
+      mesh.rotation.y += 0.0018 + currentRotation.x * 0.015;
+      mesh.rotation.x = -0.16 + currentRotation.y * 0.12 + Math.sin(time * 0.9) * 0.04;
+      mesh.rotation.z = Math.sin(time * 0.55) * 0.05;
+      mesh.scale.setScalar(1 + hoverStrength * 0.035);
+      material.opacity = 0.56 - hoverStrength * 0.08 + (Math.sin(time * 1.2) + 1) * 0.015;
       renderer.render(scene, camera);
       frameId = requestAnimationFrame(animate);
     };
@@ -76,22 +96,32 @@ export function GenerativeArtScene() {
       camera.aspect = currentMount.clientWidth / currentMount.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(currentMount.clientWidth, currentMount.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     };
     const handleMouseMove = (e: MouseEvent) => {
-      const x = e.clientX / window.innerWidth * 2 - 1;
-      const y = -(e.clientY / window.innerHeight) * 2 + 1;
-      const vec = new THREE.Vector3(x, y, 0.5).unproject(camera);
-      const dir = vec.sub(camera.position).normalize();
-      const dist = -camera.position.z / dir.z;
-      const pos = camera.position.clone().add(dir.multiplyScalar(dist));
-      if (lightRef.current) lightRef.current.position.copy(pos);
+      const rect = currentMount.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      targetRotation.set(x * 0.35, y * 0.28);
+      targetHoverStrength = 1;
     };
+    const handlePointerLeave = () => {
+      targetRotation.set(0, 0);
+      targetHoverStrength = 0;
+    };
+
     window.addEventListener("resize", handleResize);
-    window.addEventListener("mousemove", handleMouseMove);
+    currentMount.addEventListener("mousemove", handleMouseMove);
+    currentMount.addEventListener("mouseleave", handlePointerLeave);
+
     return () => {
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouseMove);
+      currentMount.removeEventListener("mousemove", handleMouseMove);
+      currentMount.removeEventListener("mouseleave", handlePointerLeave);
+      geometry.dispose();
+      material.dispose();
+      renderer.dispose();
       if (currentMount && renderer.domElement) {
         currentMount.removeChild(renderer.domElement);
       }
