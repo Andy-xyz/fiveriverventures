@@ -117,7 +117,21 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html, body {
+    /* Match Mac-style font rendering on Windows/Linux */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     @apply bg-background text-foreground;
+    /* Explicit font stack so Windows doesn't fall back to Segoe UI (heavier than SF Pro) */
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  /* Consistent monospace stack across OSes */
+  .font-mono {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   }
 }
