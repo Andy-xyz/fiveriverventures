@@ -35,7 +35,7 @@ export function TimeDisplay() {
   const localTime = formatTimeInZone(now, Intl.DateTimeFormat().resolvedOptions().timeZone);
 
   return (
-    <div className="absolute top-16 md:top-8 left-1/2 -translate-x-1/2 z-20 text-center font-mono text-foreground whitespace-nowrap">
+    <div className="absolute top-24 md:top-8 left-1/2 -translate-x-1/2 z-20 text-center font-mono text-foreground whitespace-nowrap">
       <div className="text-xs md:text-sm tracking-widest uppercase">
         {formatDate(now)} {localTime}
       </div>
