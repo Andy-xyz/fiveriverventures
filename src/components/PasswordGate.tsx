@@ -41,14 +41,14 @@ export const PasswordGate = ({ children }: { children: ReactNode }) => {
       <TimeDisplay />
 
       <main className="min-h-screen flex flex-col items-center justify-center px-6">
-        <p className="font-mono text-sm md:text-base tracking-[0.3em] uppercase text-foreground/60">
+        <p className="text-xs md:text-sm font-mono tracking-widest uppercase text-foreground/60">
           Restricted Access
         </p>
-        <h1 className="mt-3 font-mono text-xl md:text-3xl tracking-[0.25em] uppercase text-foreground">
+        <h1 className="mt-2 text-xs md:text-sm font-mono tracking-widest uppercase text-foreground">
           Enter Password to Continue
         </h1>
 
-        <form onSubmit={handleSubmit} className="mt-16 w-full max-w-xl flex flex-col items-center">
+        <form onSubmit={handleSubmit} className="mt-10 w-full max-w-xs flex flex-col items-center">
           <input
             type="password"
             autoFocus
@@ -58,18 +58,18 @@ export const PasswordGate = ({ children }: { children: ReactNode }) => {
               setError(false);
             }}
             aria-label="Password"
-            className="w-full bg-transparent border-b border-foreground/40 focus:border-foreground outline-none py-3 text-center text-foreground font-mono text-2xl tracking-[0.6em]"
+            className="w-full bg-transparent border-b border-foreground/40 focus:border-foreground outline-none py-2 text-center text-foreground font-mono text-xs md:text-sm tracking-[0.4em]"
           />
-          <div className="h-5 mt-3">
+          <div className="h-4 mt-2">
             {error && (
-              <p className="text-xs font-mono uppercase tracking-[0.2em] text-destructive">
+              <p className="text-xs font-mono uppercase tracking-widest text-destructive">
                 Incorrect password
               </p>
             )}
           </div>
           <button
             type="submit"
-            className="mt-8 px-10 py-3 border border-foreground/60 hover:border-foreground hover:bg-foreground/5 transition-colors font-mono text-sm tracking-[0.4em] uppercase text-foreground"
+            className="mt-6 px-8 py-2 border border-foreground/60 hover:border-foreground hover:bg-foreground/5 transition-colors text-xs md:text-sm font-mono tracking-widest uppercase text-foreground"
           >
             Enter
           </button>
